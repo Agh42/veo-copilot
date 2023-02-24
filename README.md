@@ -40,7 +40,7 @@ verinice.veo Copilot is a Tampermonkey script that enhances the functionality of
 3. Get an OpenAI API key. You can get a free API key from the [OpenAI
    website](https://beta.openai.com/signup/).
 
-4. Log in to the [verinice.veo web interface](https://veo-web.develop.verinice.com/login)
+4. Log in to the [verinice.veo web interface](https://veo-web.verinice.com/login)
 
 5. If verinice.veo Copilot is running, you should see a robot button in the top right corner. Click on it to open the UI.
 
@@ -50,7 +50,7 @@ verinice.veo Copilot is a Tampermonkey script that enhances the functionality of
 
 ## Usage
 
-To use the Verinice.veo Copilot Beta, simply open the [verinice.veo web interface](https://veo-web.develop.verinice.com/login) and click the robot button in the top right corner to open/close the copilot dialog.
+To use the Verinice.veo Copilot Beta, simply open the [verinice.veo web interface](https://veo-web.verinice.com/login) and click the robot button in the top right corner to open/close the copilot dialog.
 
 ## Contributing
 
