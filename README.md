@@ -1,17 +1,17 @@
 # Verinice.veo Copilo (beta)
 
-A Tampermonkey script that adds AI functions to verinice.veo, the open source ISMS tool. You will need an API key for the OpenAI API which is available on their website. You will also need access to verinice.veo by SerNet. This open source project is not affiliated with or endorsed by OpenAI or SerNet in any way.
+A Tampermonkey script that adds AI functions to [verinice.veo](https://verinice.com/veo), the open source ISMS tool. You will need an API key for the OpenAI API which is available on their website. You will also need access to verinice.veo by SerNet. This open source project is not affiliated with or endorsed by OpenAI or SerNet in any way.
 
 ## Introduction
 
-verinice.veo Copilot is a Tampermonkey script that enhances the functionality of the verinice.veo application by incorporating AI technologies. With the script, you can access AI features directly from the verinice.veo platform, making it easier to use and more efficient.
+verinice.veo Copilot is a Tampermonkey script that enhances the functionality of the [verinice.veo](https://verinice.com/veo) application by incorporating AI technologies. With the script, you can access AI features directly from the verinice.veo platform, making it easier to use and more efficient.
 
 ## Features
 
-- Adds an AI-powered copilot to verinice.veo
+- Adds an AI-powered copilot to [verinice.veo](https://verinice.com/veo)
 - Runs using the Tampermonkey extension which is available for most major browsers: Chrome, Microsoft Edge, Firefox, Safari and Opera Next
 - Integrates with OpenAI API
-- Integrates with verinice.veo ISMS tool
+- Integrates with [verinice.veo](https://verinice.com/veo) ISMS tool
 - AI chat function built in
 - Quick Actions built in such as
   - writing a description for an existing element
@@ -40,7 +40,7 @@ verinice.veo Copilot is a Tampermonkey script that enhances the functionality of
 3. Get an OpenAI API key. You can get a free API key from the [OpenAI
    website](https://beta.openai.com/signup/).
 
-4. Log in to verinice.veo
+4. Log in to the [verinice.veo web interface](https://veo-web.develop.verinice.com/login)
 
 5. If verinice.veo Copilot is running, you should see a robot button in the top right corner. Click on it to open the UI.
 
@@ -50,7 +50,7 @@ verinice.veo Copilot is a Tampermonkey script that enhances the functionality of
 
 ## Usage
 
-To use the Verinice.veo Copilot Beta, simply open the verinice.veo platform and click the robot button in the top right corner to open/close the copilot dialog.
+To use the Verinice.veo Copilot Beta, simply open the [verinice.veo web interface](https://veo-web.develop.verinice.com/login) and click the robot button in the top right corner to open/close the copilot dialog.
 
 ## Contributing
 
