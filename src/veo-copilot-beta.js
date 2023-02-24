@@ -5,10 +5,13 @@
 // @license     MIT
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // @grant       GM_addStyle
-// @grant        GM_xmlhttpRequest
-// @grant        GM_getResourceText
+// @grant       GM_xmlhttpRequest
+// @grant       GM_getResourceText
 // @connect     api.openai.com
 // @connect     chat.openai.com
+// @version     0.1
+// @namespace   koderman.de
+// @description A Tampermonkey script that enhances the functionality of the verinice.veo application by incorporating AI technologies. With the script, you can access AI features directly from the verinice.veo platform, making it easier to use and more efficient.
 // ==/UserScript==
 
 const chatconfig = {

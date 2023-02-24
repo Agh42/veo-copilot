@@ -33,7 +33,7 @@ verinice.veo Copilot is a Tampermonkey script that enhances the functionality of
 
 2. Install the Verinice.veo Copilot Beta script. You can do this by visiting
    the following link and clicking the "Install" button: [Verinice.veo Copilot
-   Beta Tampermonkey Script](<link to script>). Alternatively you can copy and
+   Beta Tampermonkey Script](https://greasyfork.org/en/scripts/460664-veo-web-verinice-com-copilot-beta). Alternatively you can copy and
    paste the source code of the script from the Github repository into the
    tampermonkey plugin.
 
