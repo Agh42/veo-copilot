@@ -18,9 +18,9 @@ const chatconfig = {
     apiKey: "",
     lastPrompt: "Me: You are an expert on cybersecurity and data privacy. Answer the following question: ",
     lastPrompts: [
-        "Me: Write a description for the title 'xyz'. Write in the style of an international standard. In German.",
-        "Me: Classify and group the following terms. Give each group a name. Answer in German. Output in the Format\n- Groupname\n1. Item 1\n2. Item 2\n",
-        "Me: List 10 cybersecurity risks that are specific to health informatics. Give a description for each. Output in the format:\n1. Risk1: Description goes here.\n2. Risk2: Description goes here:\n3. Risk3: Description goes here:"
+        `Me: Write a description for the title 'xyz'. Write in the style of an international standard. ${kartoffel()}`,
+        `Me: Classify and group the following terms. Give each group a name. ${kartoffel()} Output in the Format\n- Groupname\n1. Item 1\n2. Item 2\n`,
+        `Me: List 10 cybersecurity risks that are specific to health informatics. Give a description for each. Output in the format:\n1. Risk1: Description goes here.\n2. Risk2: Description goes here:\n3. Risk3: Description goes here:`
     ],
 }
 
@@ -58,6 +58,10 @@ function busy() {
 function notBusy() {
   $('#loading').css('-webkit-animation-play-state', 'paused');
   $('#loading').css('display', "none");
+}
+
+function kartoffel() {
+  return (typeof $nuxt !== 'undefined' && $nuxt._i18n.locale === "de" )? "In German. " : "";
 }
 
 $("body").append ( ' \
@@ -282,7 +286,7 @@ $(document).ready(function() {
                 let body = {
                     model: model,
                     //prompt: "Write a description for the following title. Write in the style of an international standard. In German." + "\nItem category:" + subTypeTl + "\nItem Title:" + title,
-                    prompt: "Write a description for the following title. Write in the style of an international standard. In German. Title: " + title,
+                    prompt: `Write a description for the following title in the context of data privacy. ${kartoffel()} Title: ${title}`,
                     max_tokens: 3000,
                     top_p: 0.1
                 };
