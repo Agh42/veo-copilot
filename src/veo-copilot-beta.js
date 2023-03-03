@@ -1,6 +1,6 @@
 
 // ==UserScript==
-// @name        veo-web.verinice.com Copilot beta
+// @name        veo-web.verinice.com ChatGPT Copilot beta
 // @match       https://veo-web.verinice.com/*
 // @license     MIT
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
@@ -9,31 +9,34 @@
 // @grant       GM_getResourceText
 // @connect     api.openai.com
 // @connect     chat.openai.com
-// @version     0.1
+// @version     0.2
 // @namespace   koderman.de
 // @description A Tampermonkey script that enhances the functionality of the verinice.veo application by incorporating AI technologies. With the script, you can access AI features directly from the verinice.veo platform, making it easier to use and more efficient.
 // ==/UserScript==
 
-const chatconfig = {
+const systemPrompt = {role: "system", content: "Answer all following prompts with expert advice on cybersecurity and data privacy."};
+const userPrompt = {role: "user", content: "Please answer the following question: "};
+
+const defaultConfig = {
     apiKey: "",
-    lastPrompt: "Me: You are an expert on cybersecurity and data privacy. Answer the following question: ",
+    lastThread: [
+      systemPrompt,
+      userPrompt
+    ],
     lastPrompts: [
-        `Me: Write a description for the title 'xyz'. Write in the style of an international standard. ${kartoffel()}`,
-        `Me: Classify and group the following terms. Give each group a name. ${kartoffel()} Output in the Format\n- Groupname\n1. Item 1\n2. Item 2\n`,
-        `Me: List 10 cybersecurity risks that are specific to health informatics. Give a description for each. Output in the format:\n1. Risk1: Description goes here.\n2. Risk2: Description goes here:\n3. Risk3: Description goes here:`
+        `Write a description for the title 'xyz'. Write in the style of an international standard. ${kartoffel()}`,
+        `Classify and group the following terms. Give each group a name. ${kartoffel()} Output in the Format\n- Groupname\n1. Item 1\n2. Item 2\n`,
+        `List 10 cybersecurity risks that are specific to health informatics. Give a description for each. Output in the format:\n1. Risk1: Description goes here.\n2. Risk2: Description goes here:\n3. Risk3: Description goes here:`
     ],
 }
 
 var config = null;
 var closed = true;
 var stored = window.localStorage.getItem('chatconfig')
-config = (stored == null) ? chatconfig : JSON.parse(stored);
+config = (stored == null) ? defaultConfig : JSON.parse(stored);
 
 
-var model = "text-davinci-003";
-//var model = "text-chat-davinci-002-20230130";
-//#model: text-chat-davinci-002-20221122 #inoffical chatgpt model
-//#model: text-chat-davinci-002-20230126 #inoffical chatgpt model
+var model = "gpt-3.5-turbo";
 
 function currentObjectType() {
     let match =  window.location.href.match(/.*objects\/(\w+?)-.*/);
@@ -64,9 +67,39 @@ function kartoffel() {
   return (typeof $nuxt !== 'undefined' && $nuxt._i18n.locale === "de" )? "In German. " : "";
 }
 
+function toChatArray(inputString) {
+  const lines = inputString.split('\n');
+  const result = [];
+  let currentObject;
+  for (const line of lines) {
+    if (line.startsWith('user:')) {
+      currentObject = { role: 'user', content: line.substring(6) };
+      result.push(currentObject);
+    } else if (line.startsWith('assistant:')) {
+      currentObject = { role: 'assistant', content: line.substring(11) };
+      result.push(currentObject);
+    } else if (line.startsWith('system:')) {
+      currentObject = { role: 'system', content: line.substring(7) };
+      result.push(currentObject);
+    } else if (currentObject) {
+      currentObject.content += `\n${line}`;
+    }
+  }
+  return result;
+}
+
+function toChatString(inputArray) {
+  let output = '';
+  for (const obj of inputArray) {
+    output += `${obj.role}: ${obj.content}\n`;
+  }
+  return output;
+}
+
+
 $("body").append ( ' \
 <div id="dialog-container"> \
-  <h2 id="dialog-h2">verinice.veo Copilot (beta)</h2> \
+  <h2 id="dialog-h2">verinice.veo™ ChatGPT™ Copilot (beta)</h2> \
   <div id="loading"></div> \
   <form id="dialog-form"> \
     <label id="dialog-label" for="dialog-password"><a href="https://platform.openai.com/signup" target="_blank" rel="noopener noreferrer">OpenAI</a> API Key:</label> \
@@ -118,18 +151,18 @@ $("#gmOpenDialogBtn").click ( function () {
             : document.getElementById("dialog-container").style.display = "none";
         closed = !closed;
         if (closed) {
-            config.lastPrompt = $("#dialog-textarea").val();
+            config.lastThread = toChatArray($("#dialog-textarea").val());
             window.localStorage.setItem('chatconfig', JSON.stringify(config));
         } else {
-            $("#dialog-textarea").val(config.lastPrompt);
+            $("#dialog-textarea").val(toChatString(config.lastThread));
         }
 
 } );
 
 $('#select-field').on('change', function() {
     var selectedOption = $(this).find('option:selected').text();
-    var currentText = $('#dialog-textarea').val();
-    $('#dialog-textarea').val(currentText + "\n" + selectedOption);
+    config.lastThread = [systemPrompt, {role: "user", content: selectedOption}];
+    $('#dialog-textarea').val(toChatString(config.lastThread));
   });
   
 
@@ -138,27 +171,18 @@ $(document).ready(function() {
         $('#dialog-submit-button').html("Asking...");
         busy();
 
-        config.lastPrompt = $("#dialog-textarea").val()
+        config.lastThread = toChatArray( $("#dialog-textarea").val() );
 
         var reqBody = {
             model: model,
-            prompt: config.lastPrompt+"\n",
-            max_tokens: 3000,
-            top_p: 0.1,
-            //temperature: 0.7,
-            //frequency_penalty: 0.5,
-            //presence_penalty: 0.5,
-            stop: ["Me:"]
+            messages: config.lastThread,
+            top_p: 0.2,
+            stop: ["user:"]
         };
-        //temperature: 0,7
-        //top_p: 1.0,
-        //frequency_penalty: 0.5,
-        //presence_penalty: 0.5,
-        
 
         GM.xmlHttpRequest({
             method: "POST",
-            url: "https://api.openai.com/v1/completions",
+            url: "https://api.openai.com/v1/chat/completions",
             data: JSON.stringify(reqBody),
             headers: {
               "Content-Type": "application/json",
@@ -167,23 +191,24 @@ $(document).ready(function() {
             onload: function(response) {
                 $('#dialog-submit-button').html("Ask");
                 var json = JSON.parse(response.responseText);
-                var answer = json?.choices?.[0]?.text;
-                console.log(response.responseText);
-                config.lastPrompt = config.lastPrompt + "\n" + answer + "\n\nMe: ";
-                $("#dialog-textarea").attr("value", config.lastPrompt);
+                config.lastThread.push(json?.choices?.[0]?.message);
+                config.lastThread.push({role: "user", content: ""});
+                $("#dialog-textarea").attr("value", toChatString(config.lastThread));
                 notBusy();
             }
         });
     });
 
     $('#dialog-clear-button').click( function() {
-        $("#dialog-textarea").val("Me: You are an expert on cybersecurity and data privacy. Answer the following question: ");
+        config.lastThread = [systemPrompt, userPrompt];
+        $("#dialog-textarea").val(toChatString(config.lastThread));
     });
 
     $('#dialog-summarize-button').click( function() {
       navigator.clipboard.readText()
         .then(clipText => {
-          $("#dialog-textarea").val("Me: Summarize the following text: \n" + clipText);
+          config.lastThread = [systemPrompt, {role: "user", content: "Summarize the following text: \n" + clipText}];
+          $("#dialog-textarea").val(toChatString(config.lastThread));
         })
         .catch(err => {
           console.error('Failed to read clipboard contents: ', err);
@@ -193,7 +218,8 @@ $(document).ready(function() {
     $('#dialog-notify-button').click( function() {
       navigator.clipboard.readText()
         .then(clipText => {
-          $("#dialog-textarea").val("Me: Write a data privacy breach notification to our customers about the following incident: \n" + clipText);
+          config.lastThread = [systemPrompt, {role: "user", content: "Write a data privacy breach notification to our customers about the following incident: \n" + clipText}];
+          $("#dialog-textarea").val(toChatString(config.lastThread));
         })
         .catch(err => {
           console.error('Failed to read clipboard contents: ', err);
@@ -208,10 +234,11 @@ $(document).ready(function() {
         .filter( (str) => !/^system$/.test(str) ); 
       if (tdTitles.length < 1) return;
 
-      const prompt = "Me: You are an expert on cybersecurity and data privacy. Based on the following list of items, write a list of 5 more items in the format \"1. Title: Description\". Create a description for each item.  Here is the list of items:\n" 
+      const prompt = "Based on the following list of items, write a list of 5 more items in the format \"1. Title: Description\". Create a description for each item.  Here is the list of items:\n" 
         + tdTitles.map((str, ind) => `${ind+1}. ${str}: Write a description here`)
           .join("\n");
-      $("#dialog-textarea").val(prompt);
+      config.lastThread = [systemPrompt, {role: "user", content: prompt}];
+      $("#dialog-textarea").val(toChatString(config.lastThread));
     });
 
     $('#dialog-suggest-button').click( function() {
@@ -246,7 +273,6 @@ $(document).ready(function() {
             var count = 0;
 
             busy();
-            //Promise.all([prom1, prom2]).then(() => {
             Promise.all([prom2]).then(() => {
                 items.forEach( item => {
                     let reqBody = { 
@@ -284,16 +310,17 @@ $(document).ready(function() {
             var doit = confirm("Add a description to this object?\n\nTitle: " + title );
             if (doit) {
                 let body = {
-                    model: model,
-                    //prompt: "Write a description for the following title. Write in the style of an international standard. In German." + "\nItem category:" + subTypeTl + "\nItem Title:" + title,
-                    prompt: `Write a description for the following title in the context of data privacy. ${kartoffel()} Title: ${title}`,
-                    max_tokens: 3000,
-                    top_p: 0.1
-                };
+                  model: model,
+                  messages: [systemPrompt, 
+                    {role:"user", content: `Write a description for the following title. ${kartoffel()} Title: ${title}`}
+                  ],
+                  top_p: 0.2,
+                  stop: ["user:"]
+              };
                 busy();
                 GM.xmlHttpRequest({
                     method: "POST",
-                    url: "https://api.openai.com/v1/completions",
+                    url: "https://api.openai.com/v1/chat/completions",
                     data: JSON.stringify(body),
                     headers: {
                       "Content-Type": "application/json",
@@ -301,8 +328,7 @@ $(document).ready(function() {
                     },
                     onload: function(response) {
                         var json = JSON.parse(response.responseText);
-                        var answer = json?.choices?.[0]?.text;
-                        console.log(response.responseText);
+                        var answer = json?.choices?.[0]?.message?.content;
                         var target = $('[id="#/properties/description"]');
                         //target.attr("value", answer);
                         write(target[0], answer);
