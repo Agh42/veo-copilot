@@ -9,9 +9,9 @@
 // @grant       GM_getResourceText
 // @connect     api.openai.com
 // @connect     chat.openai.com
-// @version     0.2
+// @version     0.2.1
 // @namespace   koderman.de
-// @description A Tampermonkey script that enhances the functionality of the verinice.veo application by incorporating AI technologies. With the script, you can access AI features directly from the verinice.veo platform, making it easier to use and more efficient.
+// @description A Tampermonkey script that enhances the functionality of the verinice.veo application by incorporating AI technologies. With the script, you can access AI features directly from the verinice.veo platform, making it easier to use and more efficient. Full documentation and source code available at https://github.com/Agh42/veo-copilot
 // ==/UserScript==
 
 const systemPrompt = {role: "system", content: "Answer all following prompts with expert advice on cybersecurity and data privacy."};
