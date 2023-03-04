@@ -1,6 +1,6 @@
-# Verinice.veo Copilot (beta)
+# Verinice.veo™ ChatGPT™ Copilot (beta)
 
-A Tampermonkey script that adds AI functions to [verinice.veo](https://verinice.com/veo), the open source ISMS tool. You will need an API key for the OpenAI API which is available on their website. You will also need access to verinice.veo by SerNet. This open source project is not affiliated with or endorsed by OpenAI or SerNet in any way.
+A Tampermonkey script that adds AI functions to [verinice.veo](https://verinice.com/veo), the open source ISMS tool. It uses the official ChatGPT model and API. You will need an API key for the OpenAI API which is available on their website. You will also need access to verinice.veo by SerNet. This open source project is not affiliated with or endorsed by OpenAI or SerNet in any way.
 
 ## Introduction
 
